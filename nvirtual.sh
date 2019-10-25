@@ -1,17 +1,15 @@
 #!/bin/bash
 set -e #when get some error this script will stopped
-echo -e "\e[94m\e[1mInsert the name of virtual host:"
-read -e virtualName
-echo -e "\e[94m\e[1mIt's a nice name, \e[4m$virtualName\e[0m\e[94m\e[1m! wait some seconds..."
+echo -e "\e[94m\e[1mIt's a nice name, \e[4m$1\e[0m\e[94m\e[1m! wait some seconds..."
 echo -e "\e[94m\e[1mI'm creating the web directory..."
-mkdir /var/www/html/$virtualName
+mkdir /var/www/html/$1
 echo -e "\e[32m\e[1mOK!"
 echo -e "\e[94m\e[1mI'm changing the permission..."
-chmod -R 755 /var/www/html/$virtualName
+chmod -R 755 /var/www/html/$1
 echo -e "\e[32m\e[1mOK!"
 echo -e "\e[94m\e[1mI'm creating a sample page for \e[4m$virtualName\e[0m\e[94m\e[1m"
-touch /var/www/html/$virtualName/index.php
-/bin/cat <<EOM >/var/www/html/$virtualName/index.php
+touch /var/www/html/$1/index.php
+/bin/cat <<EOM >/var/www/html/$1/index.php
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,10 +22,10 @@ touch /var/www/html/$virtualName/index.php
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
           crossorigin="anonymous">
 
-    <title>$virtualName!</title>
+    <title>$1!</title>
 </head>
 <body>
-<p>This is a sample page of <strong>$virtualName</strong> website </p>
+<p>This is a sample page of <strong>$1</strong> website </p>
 
 
 <!-- Optional JavaScript -->
@@ -46,29 +44,29 @@ touch /var/www/html/$virtualName/index.php
 EOM
 echo -e "\e[32m\e[1mOK!"
 echo -e "\e[94m\e[1mI'm creating the virtual host..."
-FILE=/etc/apache2/sites-available/$virtualName.conf
+FILE=/etc/apache2/sites-available/$1.conf
 echo -e "\e[94m\e[1mLoanding\e[5m.......\e[0m\e[94m\e[1m"
 touch $FILE
 /bin/cat <<EOM >$FILE
 <VirtualHost *:80>
 	ServerAdmin webmaster@localhost
-	ServerName $virtualName.test
-	ServerAlias www.$virtualName.test
-	DocumentRoot /var/www/html/$virtualName
+	ServerName $1.test
+	ServerAlias www.$1.test
+	DocumentRoot /var/www/html/$1
 
 	ErrorLog ${APACHE_LOG_DIR}/error.log
 	CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOM
 echo -e "\e[94m\e[1mI'm enabling virtual host configuration files..."
-a2ensite $virtualName.conf
+a2ensite $1.conf
 echo -e "\e[32m\e[1mOK!"
 echo -e "\e[94m\e[1mI'm restarting apache web server to take the effect changes..."
 service apache2 restart
 echo -e "\e[32m\e[1mOK!"
 echo -e "\e[94m\e[1mI'm adding your virtual host on /etc/hosts file..."
 /bin/cat <<EOM >>/etc/hosts
-127.0.0.1 $virtualName.test
+127.0.0.1 $1.test
 EOM
 echo -e "\e[32m\e[1mOK!"
 echo -e "\e[32m\e[1mI'm done!"
